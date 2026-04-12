@@ -1,6 +1,7 @@
 node_modules/
 config.yaml
 dxdiag.txt
+.npm-cache/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

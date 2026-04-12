@@ -1,12 +1,25 @@
-{
+﻿{
   "name": "skills-sync",
   "version": "0.1.0",
   "type": "module",
-  "description": "CLI 工具，用于在多个 AI 应用之间同步本地 skills 文件夹",
+  "description": "CLI tool for syncing local skills folders across multiple AI apps",
   "bin": {
     "skills-sync": "./bin/skills-sync.js"
   },
   "main": "./bin/skills-sync.js",
+  "files": [
+    "bin",
+    "src",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shanliuling/skills-sync.git"
+  },
+  "homepage": "https://github.com/shanliuling/skills-sync",
+  "bugs": {
+    "url": "https://github.com/shanliuling/skills-sync/issues"
+  },
   "engines": {
     "node": ">=18.0.0"
   },
@@ -18,7 +31,7 @@
     "gemini",
     "cli"
   ],
-  "author": "",
+  "author": "shanliuling",
   "license": "MIT",
   "scripts": {
     "start": "node bin/skills-sync.js",
