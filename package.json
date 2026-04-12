@@ -1,0 +1,36 @@
+{
+  "name": "skills-sync",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "CLI 工具，用于在多个 AI 应用之间同步本地 skills 文件夹",
+  "bin": {
+    "skills-sync": "./bin/skills-sync.js"
+  },
+  "main": "./bin/skills-sync.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "skills",
+    "ai",
+    "sync",
+    "claude",
+    "gemini",
+    "cli"
+  ],
+  "author": "",
+  "license": "MIT",
+  "scripts": {
+    "start": "node bin/skills-sync.js",
+    "dev": "node --watch bin/skills-sync.js"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "chokidar": "^3.6.0",
+    "commander": "^12.0.0",
+    "glob": "^10.3.10",
+    "inquirer": "^9.2.15",
+    "js-yaml": "^4.1.0",
+    "simple-git": "^3.22.1"
+  }
+}
