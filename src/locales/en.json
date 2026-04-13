@@ -58,7 +58,16 @@
     "nextStepHint": "Next: run skills-sync import to import existing skills",
     "languagePrompt": "Select interface language",
     "languageZh": "中文",
-    "languageEn": "English"
+    "languageEn": "English",
+    "detectedPaths": "Detected app paths:",
+    "appsLabel": "Apps:",
+    "pathsCorrectPrompt": "Are these paths correct?",
+    "pathsYes": "Yes, continue",
+    "pathsEdit": "Edit paths",
+    "editModeHint": "Edit mode: Press Enter to keep current value",
+    "pathPrompt": "path:",
+    "somePathsNotExist": "Some paths do not exist:",
+    "pathNotFoundHint": "Run skills-sync app add to add apps, or edit apps[].skillsPath in config.yaml"
   },
   "start": {
     "title": "Skills-Sync",

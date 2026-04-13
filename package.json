@@ -10,7 +10,8 @@
   "files": [
     "bin",
     "src",
-    "README.md"
+    "README.md",
+    "README.zh.md"
   ],
   "repository": {
     "type": "git",

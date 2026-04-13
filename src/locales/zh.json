@@ -58,7 +58,16 @@
     "nextStepHint": "下一步：运行 skills-sync import 导入现有 skills",
     "languagePrompt": "请选择界面语言",
     "languageZh": "中文",
-    "languageEn": "English"
+    "languageEn": "English",
+    "detectedPaths": "检测到以下路径：",
+    "appsLabel": "应用路径：",
+    "pathsCorrectPrompt": "这些路径正确吗？",
+    "pathsYes": "是，继续",
+    "pathsEdit": "编辑路径",
+    "editModeHint": "编辑模式：按回车保留当前值",
+    "pathPrompt": "路径：",
+    "somePathsNotExist": "以下路径不存在：",
+    "pathNotFoundHint": "运行 skills-sync app add 添加应用，或编辑 config.yaml 中的 apps[].skillsPath"
   },
   "start": {
     "title": "Skills-Sync",

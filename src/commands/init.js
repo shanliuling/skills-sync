@@ -15,6 +15,11 @@ import {
   getDefaultSearchPaths,
 } from '../core/scanner.js'
 import { createJunction } from '../core/symlink.js'
+import {
+  detectAllAppPaths,
+  detectMasterDir,
+  mergeWithExistingConfig,
+} from '../core/path-detect.js'
 
 /**
  * 获取 skill 的修改时间
@@ -46,6 +51,16 @@ export async function runInit() {
   } else {
     logger.info('创建配置文件...')
     const defaultConfig = getDefaultConfig()
+    const detectedMasterDir = detectMasterDir()
+    const detectedApps = detectAllAppPaths()
+    const mergedApps = mergeWithExistingConfig(detectedApps, null)
+
+    defaultConfig.masterDir = detectedMasterDir
+    defaultConfig.apps = mergedApps.map((app) => ({
+      name: app.name,
+      skillsPath: app.skillsPath,
+      enabled: app.enabled !== false,
+    }))
 
     if (!writeConfig(defaultConfig)) {
       logger.error('写入配置文件失败')

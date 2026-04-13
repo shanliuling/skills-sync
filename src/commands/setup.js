@@ -2,20 +2,27 @@
  * setup.js - 初始化配置命令
  *
  * 引导用户完成初始化：创建 master 目录、生成 config.yaml、初始化 Git（可选）
+ * 支持路径智能探测，减少用户手动输入
  */
 
 import fs from 'fs'
 import path from 'path'
-import os from 'os'
 import inquirer from 'inquirer'
 import { logger } from '../core/logger.js'
-import { getDefaultConfig, writeConfig, configExists } from '../core/config.js'
+import {
+  getDefaultConfig,
+  writeConfig,
+  configExists,
+  readConfig,
+} from '../core/config.js'
 import { initGit, addRemote } from '../core/git.js'
 import { t, initI18n, getCurrentLocale } from '../core/i18n.js'
+import {
+  detectAllAppPaths,
+  detectMasterDir,
+  mergeWithExistingConfig,
+} from '../core/path-detect.js'
 
-/**
- * 运行 setup 命令
- */
 export async function runSetup() {
   logger.title(t('setup.title'))
   logger.newline()
@@ -51,20 +58,70 @@ export async function runSetup() {
 
   initI18n(language)
 
-  const defaultConfig = getDefaultConfig()
-  const username = os.userInfo().username
+  const existingConfig = readConfig()
+  const detectedMasterDir = detectMasterDir()
+  const detectedApps = detectAllAppPaths()
+  const apps = mergeWithExistingConfig(detectedApps, existingConfig)
 
-  const answers = await inquirer.prompt([
+  logger.info(t('setup.detectedPaths'))
+  logger.newline()
+  logger.log(`  ${logger.successText('Master:')} ${detectedMasterDir}`)
+  logger.newline()
+  logger.log(`  ${logger.successText(t('setup.appsLabel'))}`)
+  for (const app of apps) {
+    const statusIcon = app.exists
+      ? logger.successText('✓')
+      : logger.warnText('○')
+    logger.log(`    ${statusIcon} ${app.name.padEnd(12)} ${app.skillsPath}`)
+  }
+  logger.newline()
+
+  const { pathsCorrect } = await inquirer.prompt([
     {
-      type: 'input',
-      name: 'masterDir',
-      message: t('setup.masterDirPrompt'),
-      default: defaultConfig.masterDir,
-      validate: (input) => {
-        if (!input.trim()) return t('setup.masterDirRequired')
-        return true
-      },
+      type: 'list',
+      name: 'pathsCorrect',
+      message: t('setup.pathsCorrectPrompt'),
+      choices: [
+        { name: t('setup.pathsYes'), value: 'yes' },
+        { name: t('setup.pathsEdit'), value: 'edit' },
+      ],
+      default: 'yes',
     },
+  ])
+
+  let finalMasterDir = detectedMasterDir
+  let finalApps = apps
+
+  if (pathsCorrect === 'edit') {
+    logger.newline()
+    logger.info(t('setup.editModeHint'))
+    logger.newline()
+
+    const masterAnswer = await inquirer.prompt([
+      {
+        type: 'input',
+        name: 'masterDir',
+        message: t('setup.masterDirPrompt'),
+        default: detectedMasterDir,
+      },
+    ])
+    finalMasterDir = masterAnswer.masterDir
+
+    for (const app of finalApps) {
+      const answer = await inquirer.prompt([
+        {
+          type: 'input',
+          name: 'skillsPath',
+          message: `${app.name} ${t('setup.pathPrompt')}`,
+          default: app.skillsPath,
+        },
+      ])
+      app.skillsPath = answer.skillsPath
+      app.exists = fs.existsSync(answer.skillsPath)
+    }
+  }
+
+  const gitAnswers = await inquirer.prompt([
     {
       type: 'confirm',
       name: 'enableGit',
@@ -94,18 +151,22 @@ export async function runSetup() {
   ])
 
   const config = {
-    masterDir: answers.masterDir,
+    masterDir: finalMasterDir,
     language: language,
     git: {
-      enabled: answers.enableGit,
-      remote: answers.gitRemote || '',
+      enabled: gitAnswers.enableGit,
+      remote: gitAnswers.gitRemote || '',
       autoPush: true,
     },
     watch: {
-      enabled: answers.enableWatch,
-      debounceMs: answers.debounceMs || 3000,
+      enabled: gitAnswers.enableWatch,
+      debounceMs: gitAnswers.debounceMs || 3000,
     },
-    apps: defaultConfig.apps,
+    apps: finalApps.map((app) => ({
+      name: app.name,
+      skillsPath: app.skillsPath,
+      enabled: app.enabled !== false,
+    })),
   }
 
   if (!fs.existsSync(config.masterDir)) {
@@ -140,12 +201,26 @@ export async function runSetup() {
         if (remoteResult.success) {
           logger.success(t('setup.gitRemoteAdded'))
         } else {
-          logger.error(t('setup.gitRemoteFailed', { error: remoteResult.message }))
+          logger.error(
+            t('setup.gitRemoteFailed', { error: remoteResult.message }),
+          )
         }
       }
     } else {
       logger.error(t('setup.gitInitFailed', { error: result.message }))
     }
+  }
+
+  const notExistApps = config.apps.filter(
+    (app) => !fs.existsSync(app.skillsPath),
+  )
+  if (notExistApps.length > 0) {
+    logger.newline()
+    logger.warn(t('setup.somePathsNotExist'))
+    for (const app of notExistApps) {
+      logger.log(`  ${logger.warnText('○')} ${app.name}: ${app.skillsPath}`)
+    }
+    logger.hint(t('setup.pathNotFoundHint'))
   }
 
   logger.newline()

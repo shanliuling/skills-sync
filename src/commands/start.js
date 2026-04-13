@@ -24,6 +24,11 @@ import {
 } from '../core/scanner.js'
 import { createJunction, checkAllLinks, LinkStatus } from '../core/symlink.js'
 import { t, initI18n, getCurrentLocale } from '../core/i18n.js'
+import {
+  detectAllAppPaths,
+  detectMasterDir,
+  mergeWithExistingConfig,
+} from '../core/path-detect.js'
 
 function getSkillModTime(skillPath) {
   try {
@@ -83,6 +88,68 @@ async function firstTimeSetup() {
 
   initI18n(language)
 
+  const detectedMasterDir = detectMasterDir()
+  const detectedApps = detectAllAppPaths()
+  const apps = mergeWithExistingConfig(detectedApps, null)
+
+  logger.info(t('setup.detectedPaths'))
+  logger.newline()
+  logger.log(`  ${logger.successText('Master:')} ${detectedMasterDir}`)
+  logger.newline()
+  logger.log(`  ${logger.successText(t('setup.appsLabel'))}`)
+  for (const app of apps) {
+    const statusIcon = app.exists
+      ? logger.successText('✓')
+      : logger.warnText('○')
+    logger.log(`    ${statusIcon} ${app.name.padEnd(12)} ${app.skillsPath}`)
+  }
+  logger.newline()
+
+  const { pathsCorrect } = await inquirer.prompt([
+    {
+      type: 'list',
+      name: 'pathsCorrect',
+      message: t('setup.pathsCorrectPrompt'),
+      choices: [
+        { name: t('setup.pathsYes'), value: 'yes' },
+        { name: t('setup.pathsEdit'), value: 'edit' },
+      ],
+      default: 'yes',
+    },
+  ])
+
+  let finalMasterDir = detectedMasterDir
+  let finalApps = apps
+
+  if (pathsCorrect === 'edit') {
+    logger.newline()
+    logger.info(t('setup.editModeHint'))
+    logger.newline()
+
+    const masterAnswer = await inquirer.prompt([
+      {
+        type: 'input',
+        name: 'masterDir',
+        message: t('setup.masterDirPrompt'),
+        default: detectedMasterDir,
+      },
+    ])
+    finalMasterDir = masterAnswer.masterDir
+
+    for (const app of finalApps) {
+      const answer = await inquirer.prompt([
+        {
+          type: 'input',
+          name: 'skillsPath',
+          message: `${app.name} ${t('setup.pathPrompt')}`,
+          default: app.skillsPath,
+        },
+      ])
+      app.skillsPath = answer.skillsPath
+      app.exists = fs.existsSync(answer.skillsPath)
+    }
+  }
+
   const { hasGithub } = await inquirer.prompt([
     {
       type: 'list',
@@ -114,33 +181,35 @@ async function firstTimeSetup() {
     githubUrl = url
   }
 
-  const defaultConfig = getDefaultConfig()
-  defaultConfig.language = language
-
-  if (githubUrl) {
-    defaultConfig.git = {
-      enabled: true,
-      remote: githubUrl,
-      autoPush: true,
-    }
-  } else {
-    defaultConfig.git = {
+  const config = {
+    masterDir: finalMasterDir,
+    language: language,
+    git: {
+      enabled: !!githubUrl,
+      remote: githubUrl || '',
+      autoPush: !!githubUrl,
+    },
+    watch: {
       enabled: false,
-      remote: '',
-      autoPush: false,
-    }
+      debounceMs: 3000,
+    },
+    apps: finalApps.map((app) => ({
+      name: app.name,
+      skillsPath: app.skillsPath,
+      enabled: app.enabled !== false,
+    })),
   }
 
-  writeConfig(defaultConfig)
+  writeConfig(config)
   logger.success(t('start.configCreated'))
   logger.newline()
 
-  const masterDir = defaultConfig.masterDir
+  const masterDir = config.masterDir
 
   if (githubUrl) {
-    await setupWithGithub(masterDir, githubUrl, defaultConfig)
+    await setupWithGithub(masterDir, githubUrl, config)
   } else {
-    await setupWithoutGithub(masterDir, defaultConfig)
+    await setupWithoutGithub(masterDir, config)
   }
 }
 
@@ -224,7 +293,10 @@ async function setupWithoutGithub(masterDir, config) {
   }
 
   logger.log(
-    t('start.skillsCount', { total: skills.length, unique: finalSkills.length }),
+    t('start.skillsCount', {
+      total: skills.length,
+      unique: finalSkills.length,
+    }),
   )
 
   logger.newline()
@@ -319,7 +391,9 @@ async function createLinks(config) {
   for (const app of enabledApps) {
     const parentDir = path.dirname(app.skillsPath)
     if (!fs.existsSync(parentDir)) {
-      logger.log(`  ${logger.dim('○')} ${t('start.appNotInstalled', { name: app.name })}`)
+      logger.log(
+        `  ${logger.dim('○')} ${t('start.appNotInstalled', { name: app.name })}`,
+      )
       continue
     }
 
@@ -360,7 +434,9 @@ async function showStatus(config) {
   logger.log('━━━━━━━━━━━━━━━━━━━━━━━━')
 
   const skillCount = countSkills(config.masterDir)
-  logger.log(t('start.masterDirInfo', { path: config.masterDir, count: skillCount }))
+  logger.log(
+    t('start.masterDirInfo', { path: config.masterDir, count: skillCount }),
+  )
 
   if (config.git?.enabled) {
     logger.log(t('start.gitSyncEnabled', { remote: config.git.remote || '' }))
@@ -379,7 +455,9 @@ async function showStatus(config) {
     if (status === LinkStatus.OK) {
       logger.success(t('start.appLinkedOk', { name: app.name }))
     } else if (status === LinkStatus.NOT_INSTALLED) {
-      logger.log(`  ${logger.dim('○')} ${t('start.appNotInstalledStatus', { name: app.name })}`)
+      logger.log(
+        `  ${logger.dim('○')} ${t('start.appNotInstalledStatus', { name: app.name })}`,
+      )
     } else {
       logger.warn(t('start.appNeedsFix', { name: app.name }))
       problemCount++
@@ -486,7 +564,9 @@ function showComplete(masterDir, hasGit) {
 
   const skillCount = countSkills(masterDir)
   logger.log(t('start.masterDirInfo', { path: masterDir, count: skillCount }))
-  logger.log(`Git ${t('common.done')}: ${hasGit ? t('common.yes') : t('common.no')}`)
+  logger.log(
+    `Git ${t('common.done')}: ${hasGit ? t('common.yes') : t('common.no')}`,
+  )
 
   logger.newline()
 

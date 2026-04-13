@@ -13,9 +13,9 @@ import { logger } from './logger.js'
 const CONFIG_FILENAME = 'config.yaml'
 
 export function getDefaultConfig() {
-  const username = os.userInfo().username
+  const homeDir = os.homedir()
   return {
-    masterDir: `C:/Users/${username}/AISkills`,
+    masterDir: path.join(homeDir, 'AISkills'),
     language: 'en',
     git: {
       enabled: false,
@@ -29,17 +29,17 @@ export function getDefaultConfig() {
     apps: [
       {
         name: 'Claude',
-        skillsPath: `C:/Users/${username}/AppData/Roaming/Claude/skills`,
+        skillsPath: path.join(homeDir, 'AppData/Roaming/Claude/skills'),
         enabled: true,
       },
       {
         name: 'Gemini CLI',
-        skillsPath: `C:/Users/${username}/.gemini/skills`,
+        skillsPath: path.join(homeDir, '.gemini/skills'),
         enabled: true,
       },
       {
         name: 'Codex',
-        skillsPath: `C:/Users/${username}/.codex/skills`,
+        skillsPath: path.join(homeDir, '.codex/skills'),
         enabled: true,
       },
     ],

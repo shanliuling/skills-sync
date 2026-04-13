@@ -15,6 +15,11 @@ import {
 } from '../core/config.js'
 import { cloneRepo } from '../core/git.js'
 import { createJunction } from '../core/symlink.js'
+import {
+  detectAllAppPaths,
+  detectMasterDir,
+  mergeWithExistingConfig,
+} from '../core/path-detect.js'
 
 /**
  * 运行 clone 命令
@@ -42,6 +47,16 @@ export async function runClone(options = {}) {
   } else {
     // 创建默认配置
     const defaultConfig = getDefaultConfig()
+    const detectedMasterDir = detectMasterDir()
+    const detectedApps = detectAllAppPaths()
+    const mergedApps = mergeWithExistingConfig(detectedApps, null)
+
+    defaultConfig.masterDir = detectedMasterDir
+    defaultConfig.apps = mergedApps.map((app) => ({
+      name: app.name,
+      skillsPath: app.skillsPath,
+      enabled: app.enabled !== false,
+    }))
     writeConfig(defaultConfig)
     config = defaultConfig
     masterDir = config.masterDir
