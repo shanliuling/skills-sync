@@ -1,10 +1,10 @@
-# Skills-Sync
+# Skills-Link
 
-[![npm version](https://badge.fury.io/js/skills-sync.svg)](https://badge.fury.io/js/skills-sync)
-[![Build Status](https://github.com/shanliuling/skills-sync/workflows/CI/badge.svg)](https://github.com/shanliuling/skills-sync/actions)
+[![npm version](https://badge.fury.io/js/skills-link.svg)](https://badge.fury.io/js/skills-link)
+[![Build Status](https://github.com/shanliuling/skills-link/workflows/CI/badge.svg)](https://github.com/shanliuling/skills-link/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)](https://www.typescriptlang.org/)
-[![Cross Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-green.svg)](https://github.com/shanliuling/skills-sync)
+[![Cross Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-green.svg)](https://github.com/shanliuling/skills-link)
 
 English | [中文](./README.zh.md)
 
@@ -13,13 +13,13 @@ A CLI tool to sync local `skills` folders across multiple AI apps.
 ## Install
 
 ```bash
-npm i -g skills-sync
+npm i -g skills-link
 ```
 
 ## Quick Start
 
 ```bash
-skills-sync
+skills-link
 ```
 
 First run guides you through setup automatically.
@@ -51,7 +51,7 @@ First run guides you through setup automatically.
 
 | Command        | Description                      |
 | -------------- | -------------------------------- |
-| `skills-sync`  | Interactive startup              |
+| `skills-link`  | Interactive startup              |
 | `setup`        | Initialize config                |
 | `init`         | One-click: setup + import + link |
 | `import`       | Import local skills              |
@@ -81,10 +81,10 @@ Are these paths correct? (Yes, continue / Edit paths)
 
 ```bash
 # CLI parameter
-skills-sync --lang zh
+skills-link --lang zh
 
 # Environment variable
-export SKILLS_SYNC_LANG=zh
+export SKILLS_LINK_LANG=zh
 
 # Or set in config.yaml
 language: zh

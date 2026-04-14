@@ -4,7 +4,7 @@
  * 提供多语言支持，语言选择优先级：
  * 1. CLI 参数 --lang <zh|en>
  * 2. 配置文件中的 language
- * 3. 环境变量 SKILLS_SYNC_LANG
+ * 3. 环境变量 SKILLS_LINK_LANG
  * 4. 系统 locale 自动推断
  * 5. 默认回退英文 en
  */
@@ -59,7 +59,7 @@ export function getLocalePriority(cliLang?: string, configLang?: string): Suppor
     return configLang as SupportedLocale
   }
 
-  const envLang = process.env.SKILLS_SYNC_LANG
+  const envLang = process.env.SKILLS_LINK_LANG
   if (envLang && SUPPORTED_LOCALES.includes(envLang as SupportedLocale)) {
     return envLang as SupportedLocale
   }

@@ -1,12 +1,12 @@
 {
-  "name": "skills-sync",
+  "name": "skills-link",
   "version": "1.0.0",
   "type": "module",
   "description": "CLI tool for syncing local skills folders across multiple AI apps",
   "bin": {
-    "skills-sync": "bin/skills-sync.js"
+    "skills-link": "bin/skills-link.js"
   },
-  "main": "./bin/skills-sync.js",
+  "main": "./bin/skills-link.js",
   "files": [
     "bin",
     "dist",
@@ -17,11 +17,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/shanliuling/skills-sync.git"
+    "url": "git+https://github.com/shanliuling/skills-link.git"
   },
-  "homepage": "https://github.com/shanliuling/skills-sync",
+  "homepage": "https://github.com/shanliuling/skills-link",
   "bugs": {
-    "url": "https://github.com/shanliuling/skills-sync/issues"
+    "url": "https://github.com/shanliuling/skills-link/issues"
   },
   "engines": {
     "node": ">=18.0.0"
@@ -39,12 +39,12 @@
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc --watch",
-    "start": "node bin/skills-sync.js",
-    "dev": "node --watch bin/skills-sync.js",
+    "start": "node bin/skills-link.js",
+    "dev": "node --watch bin/skills-link.js",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
-    "prepublishOnly": "npm run build && node bin/skills-sync.js --version && npm pack --dry-run"
+    "prepublishOnly": "npm run build && node bin/skills-link.js --version && npm pack --dry-run"
   },
   "publishConfig": {
     "access": "public"

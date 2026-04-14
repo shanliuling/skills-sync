@@ -1,6 +1,6 @@
-# Contributing to Skills-Sync
+# Contributing to Skills-Link
 
-感谢你考虑为 Skills-Sync 做贡献！🎉
+感谢你考虑为 Skills-Link 做贡献！🎉
 
 ## 目录
 
@@ -19,7 +19,7 @@
 
 ### 报告 Bug
 
-如果你发现了 bug，请先搜索 [Issues](https://github.com/shanliuling/skills-sync/issues) 确保没有重复报告。
+如果你发现了 bug，请先搜索 [Issues](https://github.com/shanliuling/skills-link/issues) 确保没有重复报告。
 
 如果没有，请创建新的 Issue 并包含：
 - 清晰的标题和描述
@@ -56,8 +56,8 @@
 
 ```bash
 # 克隆仓库
-git clone https://github.com/shanliuling/skills-sync.git
-cd skills-sync
+git clone https://github.com/shanliuling/skills-link.git
+cd skills-link
 
 # 安装依赖
 npm install
@@ -75,7 +75,7 @@ npm run build:watch
 ### 项目结构
 
 ```
-skills-sync/
+skills-link/
 ├── bin/              # CLI 入口
 ├── src/
 │   ├── commands/     # 命令实现
@@ -140,8 +140,8 @@ npm run test:coverage
 ## 获取帮助
 
 如果你有任何问题，可以：
-- 在 [Issues](https://github.com/shanliuling/skills-sync/issues) 提问
-- 查看 [Wiki](https://github.com/shanliuling/skills-sync/wiki)（如有）
+- 在 [Issues](https://github.com/shanliuling/skills-link/issues) 提问
+- 查看 [Wiki](https://github.com/shanliuling/skills-link/wiki)（如有）
 
 ## 许可证
 

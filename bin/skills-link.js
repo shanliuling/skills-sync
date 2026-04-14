@@ -50,7 +50,7 @@ function initLanguage() {
 initLanguage()
 
 program
-  .name('skills-sync')
+  .name('skills-link')
   .description(t('cli.description'))
   .version(pkg.version)
   .option('--lang <lang>', t('cli.langOption'), 'en')

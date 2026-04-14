@@ -38,7 +38,7 @@ assignees: ''
 
 ```bash
 # 命令示例
-skills-sync new-command --option value
+skills-link new-command --option value
 ```
 
 ## 额外信息

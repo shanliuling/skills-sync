@@ -37,13 +37,13 @@ This is a major release with significant improvements and new features.
 #### Project Quality
 - ✅ GitHub badges (npm version, license, TypeScript, platform)
 - ✅ Updated documentation with supported apps
-- ✅ Fixed package name consistency (skills-link → skills-sync)
+- ✅ Fixed package name consistency (skills-link → skills-link)
 
 ### Changed
 
 #### Breaking Changes
-- ⚠️ Package renamed from `skills-link` to `skills-sync`
-- ⚠️ CLI command remains `skills-sync` (consistent with package name)
+- ⚠️ Package renamed from `skills-link` to `skills-link`
+- ⚠️ CLI command remains `skills-link` (consistent with package name)
 
 #### Improvements
 - ✅ Better type safety with TypeScript
@@ -144,12 +144,12 @@ If you're upgrading from v0.x:
 1. **Package name changed**: Update your install command
    ```bash
    npm uninstall -g skills-link
-   npm install -g skills-sync
+   npm install -g skills-link
    ```
 
 2. **No config changes needed**: Your existing config.yaml will work
 
-3. **New agents supported**: Run `skills-sync setup` to detect new AI apps
+3. **New agents supported**: Run `skills-link setup` to detect new AI apps
 
 ### Future Roadmap
 

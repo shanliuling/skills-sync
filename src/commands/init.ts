@@ -26,7 +26,7 @@ import { getSkillModTime } from '../core/utils.js'
  * 运行 init 命令
  */
 export async function runInit() {
-  logger.title('Skills-Sync 一键初始化')
+  logger.title('Skills-Link 一键初始化')
   logger.newline()
 
   // 1. 检查并创建配置

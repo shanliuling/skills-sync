@@ -35,7 +35,7 @@ assignees: ''
 
 - **OS**: [例如 Windows 11, macOS 14, Ubuntu 22.04]
 - **Node 版本**: [运行 `node --version`]
-- **skills-sync 版本**: [运行 `skills-sync --version`]
+- **skills-link 版本**: [运行 `skills-link --version`]
 - **安装的 AI 应用**: [例如 Claude, Gemini CLI, Codex]
 
 ## 配置文件
