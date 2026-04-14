@@ -13,23 +13,10 @@ import { logger } from '../core/logger.js'
 import { ensureConfig } from '../core/config.js'
 import { scanSkills, copySkill } from '../core/scanner.js'
 import { t } from '../core/i18n.js'
+import { getSkillModTime } from '../core/utils.js'
 
-function getSkillModTime(skillPath) {
-  try {
-    const skillFile = path.join(skillPath, 'SKILL.md')
-    if (fs.existsSync(skillFile)) {
-      const stats = fs.statSync(skillFile)
-      return stats.mtime
-    }
-    const stats = fs.statSync(skillPath)
-    return stats.mtime
-  } catch {
-    return new Date(0)
-  }
-}
-
-function groupSkillsByName(skills) {
-  const groups = {}
+function groupSkillsByName(skills: any[]): Record<string, any[]> {
+  const groups: Record<string, any[]> = {}
   for (const skill of skills) {
     if (!groups[skill.name]) {
       groups[skill.name] = []
@@ -39,15 +26,15 @@ function groupSkillsByName(skills) {
   return groups
 }
 
-function selectLatestSkill(skills) {
-  return skills.reduce((latest, current) => {
-    const latestTime = getSkillModTime(latest.path)
-    const currentTime = getSkillModTime(current.path)
+function selectLatestSkill(skills: any[]): any {
+  return skills.reduce((latest: any, current: any) => {
+    const latestTime = getSkillModTime(latest.path).getTime()
+    const currentTime = getSkillModTime(current.path).getTime()
     return currentTime > latestTime ? current : latest
   })
 }
 
-function formatTime(date) {
+function formatTime(date: Date): string {
   return date.toLocaleString('zh-CN', {
     year: 'numeric',
     month: '2-digit',
@@ -57,7 +44,7 @@ function formatTime(date) {
   })
 }
 
-export async function runImport(options = {}) {
+export async function runImport(options: { yes?: boolean } = {}) {
   const { yes = false } = options
 
   const { exists, config } = ensureConfig()
@@ -112,8 +99,8 @@ export async function runImport(options = {}) {
     for (const name of duplicateNames) {
       const duplicates = groups[name]
       duplicates.sort((a, b) => {
-        const timeA = getSkillModTime(a.path)
-        const timeB = getSkillModTime(b.path)
+        const timeA = getSkillModTime(a.path).getTime()
+        const timeB = getSkillModTime(b.path).getTime()
         return timeB - timeA
       })
 
@@ -147,7 +134,7 @@ export async function runImport(options = {}) {
     for (const name of Object.keys(groups)) {
       const duplicates = groups[name]
       duplicates.sort(
-        (a, b) => getSkillModTime(b.path) - getSkillModTime(a.path),
+        (a, b) => getSkillModTime(b.path).getTime() - getSkillModTime(a.path).getTime(),
       )
       finalSkills.push(duplicates[0])
     }
@@ -214,7 +201,7 @@ export async function runImport(options = {}) {
         const masterSkill = path.join(config.masterDir, s.name)
         const masterTime = getSkillModTime(masterSkill)
         const importTime = getSkillModTime(s.path)
-        const isNewer = importTime > masterTime
+        const isNewer = importTime.getTime() > masterTime.getTime()
         logger.log(
           `  - ${s.name} ${isNewer ? logger.successText(t('import.importVersionNewer')) : logger.dim(t('import.masterVersionNewer'))}`,
         )
