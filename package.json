@@ -37,7 +37,8 @@
   "author": "shanliuling",
   "license": "MIT",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && npm run copy-locales",
+    "copy-locales": "node -e \"const fs=require('fs');if(!fs.existsSync('dist/locales'))fs.mkdirSync('dist/locales',{recursive:true});fs.cpSync('src/locales','dist/locales',{recursive:true})\"",
     "build:watch": "tsc --watch",
     "start": "node bin/skills-link.js",
     "dev": "node --watch bin/skills-link.js",

@@ -55,7 +55,10 @@ program
   .version(pkg.version)
   .option('--lang <lang>', t('cli.langOption'), 'en')
 
-program.command('setup').description(t('cli.commands.setup')).action(runSetup)
+program
+  .command('setup')
+  .description(t('cli.commands.setup'))
+  .action(runSetup)
 
 program
   .command('import')
@@ -76,7 +79,10 @@ program
   .option('-m, --message <message>', t('cli.options.message'))
   .action((options) => runSync(options))
 
-program.command('watch').description(t('cli.commands.watch')).action(runWatch)
+program
+  .command('watch')
+  .description(t('cli.commands.watch'))
+  .action(runWatch)
 
 program
   .command('health')
@@ -88,9 +94,15 @@ program
   .description(t('cli.commands.rollback'))
   .action(runRollback)
 
-program.command('list').description(t('cli.commands.list')).action(runList)
+program
+  .command('list')
+  .description(t('cli.commands.list'))
+  .action(runList)
 
-program.command('init').description(t('cli.commands.init')).action(runInit)
+program
+  .command('init')
+  .description(t('cli.commands.init'))
+  .action(runInit)
 
 program
   .command('clone [repo]')
