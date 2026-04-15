@@ -286,5 +286,30 @@
     "permissionDenied": "Permission denied, please check file permissions",
     "networkError": "Network error, please check your connection",
     "unknownError": "Unknown error: {error}"
+  },
+  "reset": {
+    "title": "Reset Skills-Link",
+    "noConfig": "Config file not found, may have already been reset",
+    "detecting": "Detecting changes...",
+    "noChanges": "No changes detected",
+    "noChangesHint": "May have already been reset, or initialization was never run",
+    "detected": "Detected the following:",
+    "configFile": "Config file",
+    "masterDir": "Master directory",
+    "symlinks": "Symlinks",
+    "backups": "Backups",
+    "skillCount": "skills",
+    "willExecute": "Will execute:",
+    "deleteSymlink": "Delete symlink",
+    "restoreBackup": "Restore backup",
+    "deleteMasterDir": "Delete master directory",
+    "deleteConfig": "Delete config file",
+    "dryRunPreview": "Dry run mode - above operations will be executed",
+    "dryRunHint": "Remove --dry-run to actually execute",
+    "confirmMessage": "This will reset to initial state, continue?",
+    "executing": "Executing...",
+    "complete": "Reset to initial state!",
+    "restartHint": "You can now run skills-link to reinitialize",
+    "deleteFailed": "Delete failed"
   }
 }

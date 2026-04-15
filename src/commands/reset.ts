@@ -10,11 +10,10 @@
 
 import fs from 'fs'
 import path from 'path'
-import os from 'os'
 import inquirer from 'inquirer'
 import { logger } from '../core/logger.js'
-import { readConfig } from '../core/config.js'
-import { isSymlink, getSymlinkTarget } from '../core/symlink.js'
+import { readConfig, GlobalConfig, getConfigPath } from '../core/config.js'
+import { isSymlink, getSymlinkTarget, removeSymlink } from '../core/symlink.js'
 import { t } from '../core/i18n.js'
 
 /**
@@ -33,30 +32,30 @@ interface DetectedChanges {
 export async function runReset(options: { dryRun?: boolean } = {}) {
   const { dryRun = false } = options
 
-  logger.title('重置 Skills-Link')
+  logger.title(t('reset.title'))
   logger.newline()
 
-  // 1. 读取配置（从用户主目录）
-  const home = os.homedir()
-  const config = readConfig(home)
+  // 1. 读取配置
+  const config = readConfig()
 
   if (!config) {
-    logger.warn('未找到配置文件，可能已经重置过了')
+    logger.warn(t('reset.noConfig'))
     return
   }
 
   // 2. 检测所有改动
-  logger.info('正在检测改动...')
+  logger.info(t('reset.detecting'))
   const changes = detectChanges(config)
 
-  if (
-    changes.symlinks.length === 0 &&
-    changes.backups.length === 0 &&
-    !changes.configFile &&
-    !changes.masterDir
-  ) {
-    logger.warn('未检测到任何改动')
-    logger.hint('可能已经重置过了，或者没有执行过初始化')
+  const hasWork =
+    Boolean(changes.configFile) ||
+    Boolean(changes.masterDir) ||
+    changes.symlinks.length > 0 ||
+    changes.backups.length > 0
+
+  if (!hasWork) {
+    logger.warn(t('reset.noChanges'))
+    logger.hint(t('reset.noChangesHint'))
     return
   }
 
@@ -68,8 +67,8 @@ export async function runReset(options: { dryRun?: boolean } = {}) {
   // 4. 如果是 dry-run，只显示预览
   if (dryRun) {
     logger.newline()
-    logger.info('预览模式 - 以上操作将会执行')
-    logger.hint('移除 --dry-run 参数以实际执行')
+    logger.info(t('reset.dryRunPreview'))
+    logger.hint(t('reset.dryRunHint'))
     return
   }
 
@@ -79,7 +78,7 @@ export async function runReset(options: { dryRun?: boolean } = {}) {
     {
       type: 'confirm',
       name: 'confirm',
-      message: '此操作将还原到初始状态，是否继续？',
+      message: t('reset.confirmMessage'),
       default: false,
     },
   ])
@@ -91,20 +90,19 @@ export async function runReset(options: { dryRun?: boolean } = {}) {
 
   // 6. 执行重置
   logger.newline()
-  logger.info('正在执行...')
+  logger.info(t('reset.executing'))
   executeReset(changes)
 
   // 7. 完成
   logger.newline()
-  logger.success('已还原到初始状态！')
-  logger.hint('现在可以重新运行 skills-link 进行初始化')
+  logger.success(t('reset.complete'))
+  logger.hint(t('reset.restartHint'))
 }
 
 /**
  * 检测所有改动
  */
-function detectChanges(config: any): DetectedChanges {
-  const home = os.homedir()
+function detectChanges(config: GlobalConfig): DetectedChanges {
   const changes: DetectedChanges = {
     configFile: null,
     masterDir: null,
@@ -112,8 +110,8 @@ function detectChanges(config: any): DetectedChanges {
     backups: [],
   }
 
-  // 1. 检测配置文件（在用户主目录）
-  const configPath = path.join(home, 'config.yaml')
+  // 1. 检测配置文件
+  const configPath = getConfigPath()
   if (fs.existsSync(configPath)) {
     changes.configFile = configPath
   }
@@ -151,23 +149,22 @@ function detectChanges(config: any): DetectedChanges {
         }
       }
 
-      // 检测备份
-      const backupPatterns = [
-        skillsPath + '.backup',
-        skillsPath + '.backup1',
-        skillsPath + '.backup2',
-        skillsPath + '.backup3',
-      ]
-
-      for (const backupPath of backupPatterns) {
-        if (fs.existsSync(backupPath)) {
-          changes.backups.push({
-            app: app.name,
-            backupPath,
-            originalPath: skillsPath,
-          })
-          break // 只恢复第一个找到的备份
+      // 检测备份（自动检测所有 .backup* 文件）
+      const parentDir = path.dirname(skillsPath)
+      const baseName = path.basename(skillsPath)
+      try {
+        const entries = fs.readdirSync(parentDir)
+        for (const entry of entries) {
+          if (entry.startsWith(baseName + '.backup')) {
+            changes.backups.push({
+              app: app.name,
+              backupPath: path.join(parentDir, entry),
+              originalPath: skillsPath,
+            })
+          }
         }
+      } catch {
+        // 目录不存在或无权限，跳过
       }
     }
   }
@@ -179,56 +176,56 @@ function detectChanges(config: any): DetectedChanges {
  * 显示检测到的改动
  */
 function displayChanges(changes: DetectedChanges) {
-  logger.log('检测到以下内容：')
+  logger.log(t('reset.detected'))
   logger.newline()
 
   if (changes.configFile) {
-    logger.log(`  配置文件：${changes.configFile}`)
+    logger.log(`  ${t('reset.configFile')}: ${changes.configFile}`)
   }
 
   if (changes.masterDir) {
     logger.log(
-      `  Master 目录：${changes.masterDir.path} (${changes.masterDir.skillCount} 个 skills)`,
+      `  ${t('reset.masterDir')}: ${changes.masterDir.path} (${changes.masterDir.skillCount} ${t('reset.skillCount')})`,
     )
   }
 
   if (changes.symlinks.length > 0) {
-    logger.log('  符号链接：')
+    logger.log(`  ${t('reset.symlinks')}:`)
     for (const link of changes.symlinks) {
       logger.log(`    ✓ ${link.app}: ${link.path} → ${path.basename(link.target)}`)
     }
   }
 
   if (changes.backups.length > 0) {
-    logger.log('  备份目录：')
+    logger.log(`  ${t('reset.backups')}:`)
     for (const backup of changes.backups) {
       logger.log(`    ✓ ${backup.app}: ${path.basename(backup.backupPath)}`)
     }
   }
 
   logger.newline()
-  logger.log('将会执行：')
+  logger.log(t('reset.willExecute'))
 
   let step = 1
   for (const link of changes.symlinks) {
-    logger.log(`  ${step}. 删除符号链接: ${link.app}`)
+    logger.log(`  ${step}. ${t('reset.deleteSymlink')}: ${link.app}`)
     step++
   }
 
   for (const backup of changes.backups) {
     logger.log(
-      `  ${step}. 恢复备份: ${backup.app} (${path.basename(backup.backupPath)} → skills)`,
+      `  ${step}. ${t('reset.restoreBackup')}: ${backup.app} (${path.basename(backup.backupPath)} → skills)`,
     )
     step++
   }
 
   if (changes.masterDir) {
-    logger.log(`  ${step}. 删除 AISkills 目录 (${changes.masterDir.skillCount} 个 skills)`)
+    logger.log(`  ${step}. ${t('reset.deleteMasterDir')} (${changes.masterDir.skillCount} ${t('reset.skillCount')})`)
     step++
   }
 
   if (changes.configFile) {
-    logger.log(`  ${step}. 删除配置文件`)
+    logger.log(`  ${step}. ${t('reset.deleteConfig')}`)
   }
 }
 
@@ -238,11 +235,11 @@ function displayChanges(changes: DetectedChanges) {
 function executeReset(changes: DetectedChanges) {
   // 1. 删除符号链接
   for (const link of changes.symlinks) {
-    try {
-      fs.rmSync(link.path, { recursive: true, force: true })
-      logger.success(`删除符号链接: ${link.app}`)
-    } catch (error) {
-      logger.error(`删除失败: ${link.app} - ${(error as Error).message}`)
+    const result = removeSymlink(link.path)
+    if (result.success) {
+      logger.success(`${t('reset.deleteSymlink')}: ${link.app}`)
+    } else {
+      logger.error(`${t('reset.deleteFailed')}: ${link.app} - ${result.message}`)
     }
   }
 
@@ -255,9 +252,9 @@ function executeReset(changes: DetectedChanges) {
       }
       // 重命名备份
       fs.renameSync(backup.backupPath, backup.originalPath)
-      logger.success(`恢复备份: ${backup.app}`)
+      logger.success(`${t('reset.restoreBackup')}: ${backup.app}`)
     } catch (error) {
-      logger.error(`恢复失败: ${backup.app} - ${(error as Error).message}`)
+      logger.error(`${t('reset.restoreFailed')}: ${backup.app} - ${(error as Error).message}`)
     }
   }
 
@@ -265,9 +262,9 @@ function executeReset(changes: DetectedChanges) {
   if (changes.masterDir) {
     try {
       fs.rmSync(changes.masterDir.path, { recursive: true, force: true })
-      logger.success(`删除 AISkills 目录 (${changes.masterDir.skillCount} 个 skills)`)
+      logger.success(`${t('reset.deleteMasterDir')} (${changes.masterDir.skillCount} ${t('reset.skillCount')})`)
     } catch (error) {
-      logger.error(`删除失败: ${(error as Error).message}`)
+      logger.error(`${t('reset.deleteFailed')}: ${(error as Error).message}`)
     }
   }
 
@@ -275,9 +272,9 @@ function executeReset(changes: DetectedChanges) {
   if (changes.configFile) {
     try {
       fs.rmSync(changes.configFile)
-      logger.success('删除配置文件')
+      logger.success(t('reset.deleteConfig'))
     } catch (error) {
-      logger.error(`删除配置失败: ${(error as Error).message}`)
+      logger.error(`${t('reset.deleteFailed')}: ${(error as Error).message}`)
     }
   }
 }
