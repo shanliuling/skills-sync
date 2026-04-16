@@ -290,8 +290,9 @@ function createUnixSymlink(target: string, linkPath: string, backupPath: string 
       }
     }
 
-    // 创建符号链接
-    fs.symlinkSync(target, linkPath, 'dir')
+    // 使用绝对路径创建符号链接，确保跨平台兼容
+    const absoluteTarget = path.resolve(target)
+    fs.symlinkSync(absoluteTarget, linkPath, 'dir')
 
     return {
       success: true,
