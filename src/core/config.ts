@@ -251,6 +251,17 @@ export function updateApp(config: GlobalConfig, name: string, updates: Partial<A
   return newConfig
 }
 
+/**
+ * 删除应用
+ */
+export function removeApp(config: GlobalConfig, name: string): GlobalConfig {
+  const newConfig = { ...config }
+  newConfig.apps = newConfig.apps.filter(
+    (app) => app.name.toLowerCase() !== name.toLowerCase(),
+  )
+  return newConfig
+}
+
 export default {
   getDefaultConfig,
   getConfigPath,
@@ -263,4 +274,5 @@ export default {
   findAppByName,
   addApp,
   updateApp,
+  removeApp,
 }

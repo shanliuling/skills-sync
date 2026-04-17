@@ -113,7 +113,8 @@ program
 program
   .command('app [subcommand]')
   .description(t('cli.commands.app'))
-  .action((subcommand) => runApp(subcommand || 'list'))
+  .option('-n, --name <name>', 'App name')
+  .action((subcommand, options) => runApp(subcommand || 'list', options))
 
 program
   .command('reset')

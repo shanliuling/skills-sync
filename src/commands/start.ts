@@ -14,6 +14,7 @@ import {
   writeConfig,
   configExists,
   readConfig,
+  GlobalConfig,
 } from '../core/config.js'
 import { cloneRepo, isGitRepo, initGit, addRemote } from '../core/git.js'
 import {
@@ -29,7 +30,7 @@ import {
   detectMasterDir,
   mergeWithExistingConfig,
 } from '../core/path-detect.js'
-import { getSkillModTime } from '../core/utils.js'
+import { getSkillModTime, groupAndDedupSkills } from '../core/utils.js'
 
 export async function runStart() {
   logger.title(t('start.title'))
@@ -191,7 +192,7 @@ async function firstTimeSetup() {
     },
     apps: finalApps.map((app) => ({
       name: app.name,
-      skillsPath: app.skillsPath,
+      skillsPath: app.skillsPath || '',
       enabled: app.enabled !== false,
     })),
   }
@@ -209,7 +210,7 @@ async function firstTimeSetup() {
   }
 }
 
-async function setupWithGithub(masterDir, githubUrl, config) {
+async function setupWithGithub(masterDir: string, githubUrl: string, config: GlobalConfig) {
   if (fs.existsSync(masterDir)) {
     const entries = fs.readdirSync(masterDir)
     if (entries.length > 0) {
@@ -256,7 +257,7 @@ async function setupWithGithub(masterDir, githubUrl, config) {
   showComplete(masterDir, true)
 }
 
-async function setupWithoutGithub(masterDir, config) {
+async function setupWithoutGithub(masterDir: string, config: GlobalConfig) {
   if (!fs.existsSync(masterDir)) {
     fs.mkdirSync(masterDir, { recursive: true })
   }
@@ -273,20 +274,7 @@ async function setupWithoutGithub(masterDir, config) {
     return
   }
 
-  const groups = {}
-  for (const skill of skills) {
-    if (!groups[skill.name]) {
-      groups[skill.name] = []
-    }
-    groups[skill.name].push(skill)
-  }
-
-  const finalSkills = []
-  for (const name of Object.keys(groups)) {
-    const duplicates = groups[name]
-    duplicates.sort((a, b) => getSkillModTime(b.path).getTime() - getSkillModTime(a.path).getTime())
-    finalSkills.push(duplicates[0])
-  }
+  const finalSkills = groupAndDedupSkills(skills)
 
   logger.log(
     t('start.skillsCount', {
@@ -314,7 +302,7 @@ async function setupWithoutGithub(masterDir, config) {
   showComplete(masterDir, false)
 }
 
-async function scanAndMergeLocalSkills(masterDir, config) {
+async function scanAndMergeLocalSkills(masterDir: string, config: GlobalConfig) {
   logger.info(t('start.scanningLocal'))
   const skills = await scanSkills({ searchPaths: getDefaultSearchPaths() })
 
@@ -335,20 +323,7 @@ async function scanAndMergeLocalSkills(masterDir, config) {
     return
   }
 
-  const groups = {}
-  for (const skill of newSkills) {
-    if (!groups[skill.name]) {
-      groups[skill.name] = []
-    }
-    groups[skill.name].push(skill)
-  }
-
-  const finalSkills = []
-  for (const name of Object.keys(groups)) {
-    const duplicates = groups[name]
-    duplicates.sort((a, b) => getSkillModTime(b.path).getTime() - getSkillModTime(a.path).getTime())
-    finalSkills.push(duplicates[0])
-  }
+  const finalSkills = groupAndDedupSkills(newSkills)
 
   logger.log(t('start.localSkillsFound', { count: finalSkills.length }))
 
@@ -378,7 +353,7 @@ async function scanAndMergeLocalSkills(masterDir, config) {
   }
 }
 
-async function createLinks(config) {
+async function createLinks(config: GlobalConfig) {
   logger.info(t('start.creatingLinks'))
 
   const enabledApps = config.apps?.filter((app) => app.enabled !== false) || []
@@ -409,7 +384,7 @@ async function createLinks(config) {
   logger.newline()
 }
 
-async function showStatus(config) {
+async function showStatus(config: GlobalConfig) {
   let hasChanges = false
 
   logger.info(t('start.detectingNew'))
@@ -469,7 +444,7 @@ async function showStatus(config) {
   }
 }
 
-async function autoImportNewSkills(config) {
+async function autoImportNewSkills(config: GlobalConfig) {
   const masterDir = config.masterDir
 
   const skills = await scanSkills({ searchPaths: getDefaultSearchPaths() })
@@ -491,20 +466,7 @@ async function autoImportNewSkills(config) {
     return 0
   }
 
-  const groups = {}
-  for (const skill of newSkills) {
-    if (!groups[skill.name]) {
-      groups[skill.name] = []
-    }
-    groups[skill.name].push(skill)
-  }
-
-  const finalSkills = []
-  for (const name of Object.keys(groups)) {
-    const duplicates = groups[name]
-    duplicates.sort((a, b) => getSkillModTime(b.path).getTime() - getSkillModTime(a.path).getTime())
-    finalSkills.push(duplicates[0])
-  }
+  const finalSkills = groupAndDedupSkills(newSkills)
 
   let importCount = 0
   for (const skill of finalSkills) {
@@ -522,7 +484,7 @@ async function autoImportNewSkills(config) {
   return importCount
 }
 
-async function autoSync(config) {
+async function autoSync(config: GlobalConfig) {
   try {
     const { commitChanges, pushToRemote } = await import('../core/git.js')
 
@@ -550,11 +512,11 @@ async function autoSync(config) {
       logger.error(t('start.syncFailed', { error: pushResult.message }))
     }
   } catch (error) {
-    logger.error(t('start.syncFailed', { error: error.message }))
+    logger.error(t('start.syncFailed', { error: (error as Error).message }))
   }
 }
 
-function showComplete(masterDir, hasGit) {
+function showComplete(masterDir: string, hasGit: boolean) {
   logger.log('━━━━━━━━━━━━━━━━━━━━━━━━')
   logger.success(t('start.setupComplete'))
   logger.log('━━━━━━━━━━━━━━━━━━━━━━━━')

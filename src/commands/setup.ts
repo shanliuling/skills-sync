@@ -183,7 +183,7 @@ export async function runSetup() {
     },
     apps: finalApps.map((app) => ({
       name: app.name,
-      skillsPath: app.skillsPath,
+      skillsPath: app.skillsPath || '',
       enabled: app.enabled !== false,
     })),
   }
@@ -193,7 +193,7 @@ export async function runSetup() {
       fs.mkdirSync(config.masterDir, { recursive: true })
       logger.success(t('setup.masterDirCreated', { path: config.masterDir }))
     } catch (error) {
-      logger.error(t('setup.masterDirCreateFailed', { error: error.message }))
+      logger.error(t('setup.masterDirCreateFailed', { error: (error as Error).message }))
       return
     }
   } else {
