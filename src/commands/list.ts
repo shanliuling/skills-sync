@@ -73,7 +73,6 @@ export async function runList() {
     const sourceLabel = skill.sourceApps.join(' / ')
 
     logger.log(`  ${logger.successText('✔')} ${displayName.padEnd(padEnd)} ${t('list.fromApp', { app: sourceLabel })}`)
-    logger.log(`    ${logger.dim(skill.paths[0])}`)
   }
 
   if (deduplicated.length < skills.length) {
