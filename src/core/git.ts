@@ -241,6 +241,46 @@ export async function sync(
 }
 
 /**
+ * 自动 Git 同步：commit + 根据 autoPush 配置决定是否 push
+ *
+ * 各命令统一调用此方法，避免重复写 commit + push 逻辑
+ */
+export async function autoGitSync(
+  repoPath: string,
+  autoPush: boolean,
+  message?: string,
+): Promise<GitResult> {
+  try {
+    const commitResult = await commitChanges(repoPath, message || 'Auto sync')
+    if (!commitResult.success) {
+      return commitResult
+    }
+
+    // 没有实际变更
+    if (!commitResult.hash) {
+      return { success: true, message: '没有需要提交的变更' }
+    }
+
+    if (!autoPush) {
+      return commitResult
+    }
+
+    const hasRemoteConfig = await hasRemote(repoPath)
+    if (!hasRemoteConfig) {
+      return { ...commitResult, message: '已提交，但未配置远端仓库' }
+    }
+
+    const pushResult = await pushToRemote(repoPath)
+    return {
+      ...pushResult,
+      hash: commitResult.hash,
+    }
+  } catch (error) {
+    return { success: false, message: `同步失败: ${(error as Error).message}` }
+  }
+}
+
+/**
  * 检查是否有远端
  */
 export async function hasRemote(repoPath: string): Promise<boolean> {
@@ -300,6 +340,7 @@ export default {
   getLastCommit,
   rollbackToCommit,
   sync,
+  autoGitSync,
   hasRemote,
   getLastSyncTime,
   getCommitHistory,
