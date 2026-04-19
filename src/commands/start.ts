@@ -191,7 +191,7 @@ async function firstTimeSetup() {
     apps: finalApps.map((app) => ({
       name: app.name,
       skillsPath: app.skillsPath || '',
-      enabled: app.enabled !== false,
+      enabled: app.exists,
     })),
   }
 
@@ -444,6 +444,10 @@ async function showStatus(config: GlobalConfig) {
 
 async function autoImportNewSkills(config: GlobalConfig) {
   const masterDir = config.masterDir
+
+  if (!fs.existsSync(masterDir)) {
+    return 0
+  }
 
   const skills = await scanSkills({ searchPaths: getDefaultSearchPaths() })
 
