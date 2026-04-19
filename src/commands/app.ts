@@ -95,7 +95,7 @@ export async function runApp() {
       }
     } else {
       // 禁用：只删除 symlink，普通目录跳过
-      if (fs.existsSync(app.skillsPath) && isSymlink(app.skillsPath)) {
+      if (isSymlink(app.skillsPath)) {
         const result = removeSymlink(app.skillsPath)
         if (result.success) {
           logger.success(t('app.linkRemoved', { name: app.name }))
