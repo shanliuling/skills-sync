@@ -1,17 +1,11 @@
 #!/usr/bin/env node
 
 import { program } from 'commander'
-import { runSetup } from '../dist/commands/setup.js'
-import { runImport } from '../dist/commands/import.js'
-import { runLink } from '../dist/commands/link.js'
 import { runSync } from '../dist/commands/sync.js'
 import { runWatch } from '../dist/commands/watch.js'
 import { runHealth } from '../dist/commands/health.js'
-import { runRollback } from '../dist/commands/rollback.js'
 import { runApp } from '../dist/commands/app.js'
 import { runList } from '../dist/commands/list.js'
-import { runInit } from '../dist/commands/init.js'
-import { runClone } from '../dist/commands/clone.js'
 import { runStart } from '../dist/commands/start.js'
 import { runReset } from '../dist/commands/reset.js'
 import { runRemove } from '../dist/commands/remove.js'
@@ -58,22 +52,19 @@ program
   .option('--lang <lang>', t('cli.langOption'), 'en')
 
 program
-  .command('setup')
-  .description(t('cli.commands.setup'))
-  .action(runSetup)
+  .command('list')
+  .description(t('cli.commands.list'))
+  .action(runList)
 
 program
-  .command('import')
-  .description(t('cli.commands.import'))
-  .option('-y, --yes', t('cli.options.skipConfirm'))
-  .action((options) => runImport(options))
+  .command('remove')
+  .description(t('cli.commands.remove'))
+  .action(runRemove)
 
 program
-  .command('link')
-  .description(t('cli.commands.link'))
-  .option('-a, --app <name>', t('cli.options.app'))
-  .option('-d, --dry-run', t('cli.options.dryRun'))
-  .action((options) => runLink(options))
+  .command('app')
+  .description(t('cli.commands.app'))
+  .action(runApp)
 
 program
   .command('sync')
@@ -92,40 +83,10 @@ program
   .action(runHealth)
 
 program
-  .command('rollback')
-  .description(t('cli.commands.rollback'))
-  .action(runRollback)
-
-program
-  .command('list')
-  .description(t('cli.commands.list'))
-  .action(runList)
-
-program
-  .command('init')
-  .description(t('cli.commands.init'))
-  .action(runInit)
-
-program
-  .command('clone [repo]')
-  .description(t('cli.commands.clone'))
-  .action((repo) => runClone({ repo }))
-
-program
-  .command('app')
-  .description(t('cli.commands.app'))
-  .action(runApp)
-
-program
   .command('reset')
   .description(t('cli.commands.reset'))
   .option('-d, --dry-run', t('cli.options.dryRun'))
   .action((options) => runReset(options))
-
-program
-  .command('remove')
-  .description(t('cli.commands.remove'))
-  .action(runRemove)
 
 if (process.argv.length === 2) {
   runStart()
