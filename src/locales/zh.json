@@ -85,6 +85,7 @@
     "dirExistsNotEmpty": "目录 {path} 已存在且不为空",
     "howToHandle": "如何处理？",
     "deleteAndClone": "删除并重新克隆",
+    "mergeLocalAndRemote": "合并：克隆远程为主，本地独有的 skills 补进来",
     "keepAndSkip": "保留现有内容，跳过克隆",
     "cloning": "正在克隆仓库...",
     "cloneFailed": "克隆失败: {error}",

@@ -220,20 +220,59 @@ async function setupWithGithub(masterDir: string, githubUrl: string, config: Glo
           name: 'action',
           message: t('start.howToHandle'),
           choices: [
+            { name: t('start.mergeLocalAndRemote'), value: 'merge' },
             { name: t('start.deleteAndClone'), value: 'delete' },
             { name: t('start.keepAndSkip'), value: 'keep' },
           ],
-          default: 'keep',
+          default: 'merge',
         },
       ])
 
-      if (action === 'delete') {
-        fs.rmSync(masterDir, { recursive: true, force: true })
-      } else {
+      if (action === 'keep') {
         await createLinks(config)
         showComplete(masterDir, true)
         return
       }
+
+      if (action === 'merge') {
+        const localSkills = await scanAndCollectLocalSkills(masterDir)
+        fs.rmSync(masterDir, { recursive: true, force: true })
+
+        logger.info(t('start.cloning'))
+        const result = await cloneRepo(githubUrl, masterDir)
+
+        if (!result.success) {
+          logger.error(t('start.cloneFailed', { error: result.message }))
+          logger.hint(t('start.cloneFailedHint'))
+          return
+        }
+
+        logger.success(t('start.cloneSuccess'))
+        const remoteCount = countSkills(masterDir)
+        logger.log(t('start.skillsFound', { count: remoteCount }))
+        logger.newline()
+
+        // Import local-only skills into cloned master
+        let mergedCount = 0
+        for (const skill of localSkills) {
+          const result = copySkill(skill.path, masterDir, false)
+          if (result.success) {
+            logger.success(t('start.skillImported', { name: skill.name }))
+            mergedCount++
+          }
+        }
+
+        if (mergedCount > 0) {
+          logger.success(t('start.skillsMerged', { count: mergedCount }))
+        }
+
+        await createLinks(config)
+        showComplete(masterDir, true)
+        return
+      }
+
+      // action === 'delete'
+      fs.rmSync(masterDir, { recursive: true, force: true })
     }
   }
 
@@ -523,6 +562,26 @@ async function autoSync(config: GlobalConfig) {
   } catch (error) {
     logger.error(t('start.syncFailed', { error: (error as Error).message }))
   }
+}
+
+async function scanAndCollectLocalSkills(masterDir: string) {
+  logger.info(t('start.scanningLocal'))
+  const skills = await scanSkills({ searchPaths: getDefaultSearchPaths() })
+
+  if (skills.length === 0) {
+    return []
+  }
+
+  const existingNames = new Set(
+    fs
+      .readdirSync(masterDir, { withFileTypes: true })
+      .filter((e) => e.isDirectory())
+      .map((e) => e.name),
+  )
+
+  // Only keep skills not already in master (local-only)
+  const localOnly = skills.filter((s) => !existingNames.has(s.name))
+  return groupAndDedupSkills(localOnly)
 }
 
 function showComplete(masterDir: string, hasGit: boolean) {

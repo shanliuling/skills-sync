@@ -85,6 +85,7 @@
     "dirExistsNotEmpty": "Directory {path} already exists and is not empty",
     "howToHandle": "How to handle?",
     "deleteAndClone": "Delete and re-clone",
+    "mergeLocalAndRemote": "Merge: clone remote, add local-only skills",
     "keepAndSkip": "Keep existing content, skip clone",
     "cloning": "Cloning repository...",
     "cloneFailed": "Clone failed: {error}",
