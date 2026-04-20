@@ -488,7 +488,8 @@ async function showStatus(config: GlobalConfig) {
 
   if (problemCount > 0) {
     logger.warn(t('start.appsNeedFix', { count: problemCount }))
-    logger.hint(t('start.fixLinkHint'))
+    logger.newline()
+    await createLinks(config)
   }
 }
 
