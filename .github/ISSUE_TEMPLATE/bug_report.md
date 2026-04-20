@@ -1,59 +1,59 @@
 ---
-name: Bug 报告
-about: 报告一个 bug 帮助我们改进
+name: Bug Report
+about: Report a bug to help us improve
 title: '[BUG] '
 labels: bug
 assignees: ''
 ---
 
-## Bug 描述
+## Bug Description
 
-清晰简洁地描述这个 bug。
+A clear and concise description of the bug.
 
-## 重现步骤
+## Steps to Reproduce
 
-1. 运行命令 '...'
-2. 输入 '....'
-3. 滚动到 '....'
-4. 看到错误
+1. Run command '...'
+2. Enter '....'
+3. Scroll to '....'
+4. See error
 
-## 期望行为
+## Expected Behavior
 
-描述你期望发生什么。
+Describe what you expected to happen.
 
-## 实际行为
+## Actual Behavior
 
-描述实际发生了什么。
+Describe what actually happened.
 
-## 截图
+## Screenshots
 
-如果适用，添加截图帮助解释问题。
+If applicable, add screenshots to help explain the problem.
 
-## 环境
+## Environment
 
-请提供以下信息：
+Please provide the following information:
 
-- **OS**: [例如 Windows 11, macOS 14, Ubuntu 22.04]
-- **Node 版本**: [运行 `node --version`]
-- **skills-link 版本**: [运行 `skills-link --version`]
-- **安装的 AI 应用**: [例如 Claude, Gemini CLI, Codex]
+- **OS**: [e.g. Windows 11, macOS 14, Ubuntu 22.04]
+- **Node version**: [run `node --version`]
+- **skills-link version**: [run `skills-link --version`]
+- **Installed AI apps**: [e.g. Claude Code, Gemini CLI, Codex]
 
-## 配置文件
+## Config File
 
-如果相关，请粘贴你的 `config.yaml` 内容（记得隐藏敏感信息）：
+If relevant, paste your `config.yaml` content (remember to redact sensitive info):
 
 ```yaml
-# 在这里粘贴配置
+# Paste config here
 ```
 
-## 日志输出
+## Log Output
 
-请粘贴相关的错误日志：
+Paste relevant error logs:
 
 ```
-在这里粘贴日志
+Paste logs here
 ```
 
-## 额外信息
+## Additional Context
 
-添加任何其他关于这个问题的信息。
+Add any other context about the problem.

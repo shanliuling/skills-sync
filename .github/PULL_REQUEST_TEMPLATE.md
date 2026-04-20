@@ -1,61 +1,61 @@
 # Pull Request
 
-## 描述
+## Description
 
-清晰简洁地描述这个 PR 的内容。
+A clear and concise description of this PR.
 
-### 修复的 Issue
+### Related Issue
 
-修复 #(issue 编号)
+Fixes #(issue number)
 
-### 变更类型
+### Type of Change
 
-请删除不适用的选项：
+Please delete options that do not apply:
 
-- [ ] Bug 修复（修复问题的非破坏性变更）
-- [ ] 新功能（增加功能的非破坏性变更）
-- [ ] 破坏性变更（会导致现有功能不按预期工作的修复或功能）
-- [ ] 文档更新
-- [ ] 代码重构
-- [ ] 性能改进
-- [ ] 测试相关
+- [ ] Bug fix (non-breaking change that fixes an issue)
+- [ ] New feature (non-breaking change that adds functionality)
+- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
+- [ ] Documentation update
+- [ ] Code refactoring
+- [ ] Performance improvement
+- [ ] Test related
 
-## 如何测试
+## How to Test
 
-请描述测试步骤：
+Describe the steps to test:
 
-1. 运行命令 '...'
-2. 检查输出 '...'
-3. 验证 '...'
+1. Run command '...'
+2. Check output '...'
+3. Verify '...'
 
-## 检查清单
+## Checklist
 
-- [ ] 我的代码遵循项目的编码规范
-- [ ] 我进行了自我审查
-- [ ] 我为代码添加了必要的注释
-- [ ] 我更新了相关文档
-- [ ] 我的变更没有产生新的警告
-- [ ] 我添加了测试来证明我的修复/功能有效
-- [ ] 新旧测试都通过了
-- [ ] 任何依赖的变更都已被合并和发布
+- [ ] My code follows the project's coding standards
+- [ ] I have performed a self-review
+- [ ] I have added necessary comments where needed
+- [ ] I have updated related documentation
+- [ ] My changes generate no new warnings
+- [ ] I have added tests that prove my fix/feature works
+- [ ] New and existing tests pass
+- [ ] Any dependent changes have been merged and published
 
-## 截图
+## Screenshots
 
-如果适用，添加截图展示变更效果。
+If applicable, add screenshots showing the changes.
 
-## 额外信息
+## Additional Context
 
-添加任何其他关于 PR 的信息。
+Add any other context about this PR.
 
-## 测试结果
+## Test Results
 
-请粘贴测试结果：
+Paste test results:
 
 ```bash
 npm test
-# 在这里粘贴输出
+# Paste output here
 ```
 
 ---
 
-感谢你的贡献！🎉
+Thanks for your contribution!

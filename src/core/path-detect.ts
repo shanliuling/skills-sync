@@ -168,7 +168,8 @@ export function detectAllAppPaths(): DetectedAppPath[] {
 
   for (const [id, def] of Object.entries(agentRegistry)) {
     const detectedPath = detectAppPath(id)
-    const exists = detectedPath ? fs.existsSync(detectedPath) : false
+    const parentDir = detectedPath ? path.dirname(detectedPath) : null
+    const exists = parentDir ? fs.existsSync(parentDir) : false
 
     results.push({
       name: def.displayName,
@@ -236,7 +237,7 @@ export function mergeWithExistingConfig(
       return {
         ...detected,
         skillsPath: existing.skillsPath,
-        exists: fs.existsSync(existing.skillsPath),
+        exists: fs.existsSync(path.dirname(existing.skillsPath)),
       }
     }
 

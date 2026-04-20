@@ -16,41 +16,41 @@ jobs:
         node-version: [18.x, 20.x]
 
     steps:
-    - name: Checkout 代码
+    - name: Checkout
       uses: actions/checkout@v4
 
-    - name: 设置 Node.js ${{ matrix.node-version }}
+    - name: Setup Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
 
-    - name: 安装依赖
+    - name: Install dependencies
       run: npm ci
 
-    - name: 构建项目
+    - name: Build
       run: npm run build
 
-    - name: 运行测试
+    - name: Run tests
       run: npm test
 
   lint:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout 代码
+    - name: Checkout
       uses: actions/checkout@v4
 
-    - name: 设置 Node.js
+    - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '20.x'
         cache: 'npm'
 
-    - name: 安装依赖
+    - name: Install dependencies
       run: npm ci
 
-    - name: 检查 TypeScript 编译
+    - name: Check TypeScript compilation
       run: npm run build
 
   release:
@@ -59,23 +59,23 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     steps:
-    - name: Checkout 代码
+    - name: Checkout
       uses: actions/checkout@v4
 
-    - name: 设置 Node.js
+    - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '20.x'
         cache: 'npm'
         registry-url: 'https://registry.npmjs.org'
 
-    - name: 安装依赖
+    - name: Install dependencies
       run: npm ci
 
-    - name: 构建项目
+    - name: Build
       run: npm run build
 
-    - name: 检查版本是否需要发布
+    - name: Check if publish is needed
       id: check_version
       run: |
         PACKAGE_VERSION=$(node -p "require('./package.json').version")
@@ -88,13 +88,13 @@ jobs:
           echo "need_publish=false" >> $GITHUB_OUTPUT
         fi
 
-    - name: 发布到 npm
+    - name: Publish to npm
       if: steps.check_version.outputs.need_publish == 'true'
       run: npm publish
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-    - name: 创建 Git Tag
+    - name: Create Git Tag
       if: steps.check_version.outputs.need_publish == 'true'
       run: |
         git config --local user.email "action@github.com"
@@ -102,7 +102,7 @@ jobs:
         git tag -a v${{ steps.check_version.outputs.version }} -m "Release v${{ steps.check_version.outputs.version }}"
         git push origin v${{ steps.check_version.outputs.version }}
 
-    - name: 创建 GitHub Release
+    - name: Create GitHub Release
       if: steps.check_version.outputs.need_publish == 'true'
       uses: actions/create-release@v1
       env:

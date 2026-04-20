@@ -1,54 +1,54 @@
 ---
-name: 功能建议
-about: 为这个项目提出一个新功能
+name: Feature Request
+about: Suggest a new feature for this project
 title: '[FEATURE] '
 labels: enhancement
 assignees: ''
 ---
 
-## 功能描述
+## Feature Description
 
-清晰简洁地描述你想要的功能。
+A clear and concise description of the feature you'd like.
 
-## 问题背景
+## Problem
 
-这个功能解决了什么问题？请描述当前让你困扰的地方。
+What problem does this feature solve? Describe the current frustration.
 
-例如：我总是很沮丧当 [...]
+For example: I'm always frustrated when [...]
 
-## 建议的解决方案
+## Proposed Solution
 
-描述你希望如何实现这个功能。
+Describe how you'd like this feature to work.
 
-## 替代方案
+## Alternatives Considered
 
-描述你考虑过的其他解决方案或功能。
+Describe any alternative solutions or features you've considered.
 
-## 使用场景
+## Use Case
 
-描述这个功能的具体使用场景：
+Describe the specific use case:
 
-1. 作为一名 [...]
-2. 我想要 [...]
-3. 以便 [...]
+1. As a [...]
+2. I want to [...]
+3. So that [...]
 
-## 示例
+## Example
 
-如果适用，提供示例展示该功能如何使用：
+If applicable, provide an example of how the feature would be used:
 
 ```bash
-# 命令示例
+# Command example
 skills-link new-command --option value
 ```
 
-## 额外信息
+## Additional Context
 
-添加任何其他信息或截图来解释你的功能建议。
+Add any other context or screenshots about the feature request.
 
-## 实现建议
+## Implementation Suggestions
 
-如果你有技术背景，可以提供实现建议：
+If you have technical background, feel free to suggest:
 
-- 涉及的文件
-- API 设计
-- 实现思路
+- Files involved
+- API design
+- Implementation approach
