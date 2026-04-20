@@ -5,7 +5,7 @@
  * 所有操作在 git.enabled: false 时应跳过
  */
 
-import simpleGit from 'simple-git'
+import { simpleGit } from 'simple-git'
 import { logger } from './logger.js'
 
 /**
@@ -29,7 +29,7 @@ export interface GitStatusResult {
  * 创建 simple-git 实例
  */
 export function createGit(repoPath: string) {
-  return simpleGit.simpleGit(repoPath)
+  return simpleGit(repoPath)
 }
 
 /**
@@ -181,7 +181,7 @@ export async function cloneRepo(
   localPath: string,
 ): Promise<GitResult> {
   try {
-    await simpleGit.simpleGit().clone(repoUrl, localPath)
+    await simpleGit().clone(repoUrl, localPath)
     return { success: true, message: '克隆成功' }
   } catch (error) {
     return { success: false, message: `克隆失败: ${(error as Error).message}` }
