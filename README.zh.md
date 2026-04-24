@@ -2,7 +2,7 @@
 
 # Skills-Link
 
-<img src="assets/header-image.png" alt="Skills-Link Banner" width="800" />
+<img src="assets/header-image.jpg" alt="Skills-Link Banner" width="800" />
 
 **一个 skills 文件夹，所有 AI 应用共享。**
 
