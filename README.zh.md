@@ -2,6 +2,8 @@
 
 # Skills-Link
 
+<img src="assets/header-image.png" alt="Skills-Link Banner" width="800" />
+
 **一个 skills 文件夹，所有 AI 应用共享。**
 
 一条命令，在 41+ AI 编程工具之间同步本地 skills。

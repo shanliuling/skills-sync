@@ -4,6 +4,8 @@
 
 # Skills-Link
 
+<img src="assets/header-image.png" alt="Skills-Link Banner" width="800" />
+
 **One skills folder, every AI app.**
 
 Sync your local `skills` across 41+ AI coding agents with a single command.
