@@ -8,6 +8,8 @@
 
 一条命令，在 41+ AI 编程工具之间同步本地 skills。
 
+也支持 rules 同步：`rules-link`
+
 [![npm version](https://badge.fury.io/js/skills-link.svg)](https://badge.fury.io/js/skills-link)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -55,35 +57,9 @@ skills-link
 ## 命令
 
 | 命令 | 说明 |
-|---|---|
-| `skills-link` | 交互式启动 — 导入、链接、同步 |
-| `skills-link list` | 列出本地 skills（自动去重） |
-| `skills-link remove` | 从 Master 目录删除 skills |
-| `skills-link app` | 切换启用的应用 |
-| `skills-link sync` | 提交并推送到 GitHub |
-| `skills-link watch` | 文件变更时自动同步 |
-| `skills-link health` | 检查符号链接状态 |
-| `skills-link reset` | 撤销所有操作，恢复初始状态 |
-
----
-
-## Rules 同步
-
-跨设备同步 AI 应用的 rules/指令：
-
-```bash
-rules-link
-```
-
-**支持的平台：**
-
-| 平台 | Rules 路径 |
-|---|---|
-| Claude Code | `~/.claude/rules/` |
-| Codex | `~/.codex/AGENTS.md` |
-| Gemini CLI | `~/.gemini/GEMINI.md` |
-
-可以选择用本地的覆盖远程的，或用远程的覆盖本地的。
+|------|------|
+| `skills-link` | 主命令 — 同步 skills |
+| `rules-link` | 同步 rules |
 
 ---
 
@@ -104,17 +80,17 @@ rules-link
 | Qoder | Qwen Code | Replit | Roo Code |
 | Trae | Trae CN | Windsurf | Zencoder |
 
-另有 `universal` 通用回退，适用于未列出的 agent。[一行代码即可添加新 agent。](src/core/path-detect.ts)
+还支持 `universal` 作为任何未列出 agent 的备选方案。[只需一行代码即可添加新 agent。](src/core/path-detect.ts)
 
 ---
 
 ## 跨设备同步
 
 ```bash
-# 机器 A — 推送 skills 到 GitHub
+# 电脑 A — 推送 skills 到 GitHub
 skills-link sync
 
-# 机器 B — 克隆并链接
+# 电脑 B — 克隆并链接
 skills-link  # 自动从远程拉取
 ```
 
@@ -122,10 +98,9 @@ skills-link  # 自动从远程拉取
 
 ## 配置
 
-`~/.skills-link/config.yaml`：
+`~/AISkills/config.yaml`：
 
 ```yaml
-language: zh
 masterDir: ~/AISkills
 
 git:
@@ -133,27 +108,19 @@ git:
   remote: https://github.com/you/skills.git
   autoPush: true
 
-watch:
-  enabled: false
-  debounceMs: 3000
-
 apps:
   - name: Claude Code
     skillsPath: ~/.claude/skills
-    enabled: true
-  - name: Cursor
-    skillsPath: ~/.cursor/skills
     enabled: true
 ```
 
 ---
 
-## 语言设置
+## 语言
 
 ```bash
-skills-link --lang en     # 命令行参数
-export SKILLS_LINK_LANG=en  # 环境变量
-# 或在 config.yaml 中设置 language: en
+skills-link --lang zh     # 命令行参数
+# 或在 config.yaml 中设置 language: zh
 ```
 
 ---
@@ -168,6 +135,6 @@ export SKILLS_LINK_LANG=en  # 环境变量
 
 ---
 
-## License
+## 许可证
 
 [MIT](./LICENSE)
