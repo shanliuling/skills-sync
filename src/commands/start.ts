@@ -434,7 +434,7 @@ async function showStatus(config: GlobalConfig) {
   }
 
   logger.info(t('start.detectingNew'))
-  const newSkillsCount = await autoImportNewSkills(config)
+  await autoImportNewSkills(config)
 
   // Sync to remote whenever git is configured, not only when new skills are imported.
   // This ensures uncommitted changes (e.g., skills added locally but not yet pushed)
