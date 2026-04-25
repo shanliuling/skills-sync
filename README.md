@@ -70,6 +70,26 @@ Run it again anytime to sync changes and check health.
 
 ---
 
+## Rules Sync
+
+Sync your AI app's rules/instructions across devices:
+
+```bash
+rules-link
+```
+
+**Supported platforms:**
+
+| Platform | Rules Path |
+|---|---|
+| Claude Code | `~/.claude/rules/` |
+| Codex | `~/.codex/AGENTS.md` |
+| Gemini CLI | `~/.gemini/GEMINI.md` |
+
+Choose to upload local rules to GitHub or download remote rules to local.
+
+---
+
 ## Supported agents
 
 41+ agents out of the box:

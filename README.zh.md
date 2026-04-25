@@ -67,6 +67,26 @@ skills-link
 
 ---
 
+## Rules 同步
+
+跨设备同步 AI 应用的 rules/指令：
+
+```bash
+rules-link
+```
+
+**支持的平台：**
+
+| 平台 | Rules 路径 |
+|---|---|
+| Claude Code | `~/.claude/rules/` |
+| Codex | `~/.codex/AGENTS.md` |
+| Gemini CLI | `~/.gemini/GEMINI.md` |
+
+可以选择用本地的覆盖远程的，或用远程的覆盖本地的。
+
+---
+
 ## 支持的 Agent
 
 开箱即用 41+ agent：
