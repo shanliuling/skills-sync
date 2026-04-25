@@ -108,7 +108,7 @@ async function scanRulesFiles(sourcePath: string, isDirectory: boolean): Promise
   try {
     if (isDirectory) {
       // 目录：递归查找所有 .md 文件
-      const pattern = sourcePath.replace(/\\/g, '/') + '**/*.md'
+      const pattern = path.join(sourcePath, '**/*.md').replace(/\\/g, '/')
       const matches = await glob(pattern, {
         absolute: true,
         nocase: true,
@@ -238,18 +238,12 @@ function getAllFiles(dir: string): string[] {
 }
 
 /**
- * 根据平台名获取目录名
+ * 根据平台名获取目录名（从注册表动态获取）
  */
 function getAppDirName(appName: string): string {
-  const map: Record<string, string> = {
-    'Claude Code': 'claude',
-    'Cursor': 'cursor',
-    'Cline': 'cline',
-    'Codex': 'codex',
-    'Gemini CLI': 'gemini',
-    'Antigravity': 'antigravity',
-  }
-  return map[appName] || appName.toLowerCase().replace(/\s+/g, '-')
+  const entry = Object.entries(rulesAppRegistry).find(([_, def]) => def.name === appName)
+  if (entry) return entry[0]
+  return appName.toLowerCase().replace(/\s+/g, '-')
 }
 
 /**

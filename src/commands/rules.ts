@@ -23,7 +23,6 @@ export async function runRules() {
   }
 
   const masterDir = config.masterDir
-  const rulesDir = path.join(masterDir, 'rules')
 
   // 确保 masterDir 存在
   if (!fs.existsSync(masterDir)) {
@@ -106,10 +105,10 @@ export async function runRules() {
   // 询问用户选择
   if (!hasRemoteConfigured) {
     // 没有远程，先问用户要不要配置
-    const { hasRemote } = await inquirer.prompt([
+    const { setupRemoteAction } = await inquirer.prompt([
       {
         type: 'list',
-        name: 'hasRemote',
+        name: 'setupRemoteAction',
         message: t('rules.askSetupGit'),
         choices: [
           { name: t('rules.skipGit'), value: 'skip' },
@@ -119,7 +118,7 @@ export async function runRules() {
       },
     ])
 
-    if (hasRemote === 'enter') {
+    if (setupRemoteAction === 'enter') {
       const { remoteUrl } = await inquirer.prompt([
         {
           type: 'input',
